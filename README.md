@@ -8,7 +8,7 @@ This fork is a modernised, and maintained, version of [@shuber's](https://github
 
 ## Installation
 
-Click the Download link above or `git clone git@github.com:powderblue/curl.git`
+Use [Composer](https://getcomposer.org/).
 
 ## Usage
 
@@ -17,8 +17,9 @@ Click the Download link above or `git clone git@github.com:powderblue/curl.git`
 Simply require and initialize the `Curl` class like so:
 
 ```php
-require '<lib-dir>/curl.php';
-$curl = new Curl();
+require '<your-project-dir>/vendor/autoload.php';
+
+$curl = new PowderBlue\Curl\Curl();
 ```
 
 ### Performing a Request
@@ -50,11 +51,11 @@ $response = $curl->get('https://www.google.com/', ['q' => 'test']);
 $response = $curl->post('test.com/posts', ['title' => 'Test', 'body' => 'This is a test']);
 ```
 
-All requests return an instance of `CurlResponse`&mdash;see below for more information&mdash;or `false` if an error occurred.  You can access the error string with `Curl::error()`.
+All requests return an instance of `PowderBlue\Curl\Response`&mdash;see below for more information&mdash;or `false` if an error occurred.  You can access the error string with `Curl::error()`.
 
 ### The Response Class
 
-A normal cURL request returns the headers and body in a single string.  The `CurlResponse` class splits that string, placing the two parts in separate properties.
+A normal cURL request returns the headers and body in a single string.  The `PowderBlue\Curl\Response` class splits that string, placing the two parts in separate properties.
 
 For example:
 
@@ -89,7 +90,7 @@ Array
 )
 ```
 
-> :information_source: `CurlResponse::__toString()` returns the response body, so&mdash;for example&mdash;`echo $response` will output the same as `echo $response->body`.
+> :information_source: `PowderBlue\Curl\Response::__toString()` returns the response body, so&mdash;for example&mdash;`echo $response` will output the same as `echo $response->body`.
 
 ### Cookies/Sessions
 

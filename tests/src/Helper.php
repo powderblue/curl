@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PowderBlue\Curl\Tests;
 
+use function ensure;
+use function preg_match;
+
 class Helper
 {
     // /**

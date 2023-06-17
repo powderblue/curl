@@ -29,7 +29,6 @@
     <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
 
     <rule ref="PSR1">
-        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
         <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
     </rule>
 

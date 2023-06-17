@@ -1,26 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
+namespace PowderBlue\Curl\Tests\UnitTestCase;
+
+use PowderBlue\Curl\Curl;
+use PowderBlue\Curl\Response;
 use PowderBlue\Curl\Tests\Helper;
 use ztest\UnitTestCase as TestCase;
+
+use function assert_equal;
 
 class CurlTest extends TestCase
 {
     private Curl $curl;
 
-    private CurlResponse $response;
+    private Response $response;
 
     public function setup(): void
     {
         $this->curl = new Curl();
 
-        /** @phpstan-var CurlResponse */
+        /** @phpstan-var Response */
         $response = $this->curl->get('www.google.com');
         $this->response = $response;
     }
 
     public function test_get(): void
     {
-        Helper::assertMatches('~google~', $this->response);
+        Helper::assertMatches('~google~', $this->response->body);
         assert_equal(200, $this->response->headers['Status-Code']);
     }
 

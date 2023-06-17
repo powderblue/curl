@@ -1,11 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
+namespace PowderBlue\Curl;
+
+use function constant;
+use function curl_close;
+use function curl_errno;
+use function curl_error;
+use function curl_exec;
+use function curl_init;
+use function curl_setopt;
+use function dirname;
+use function http_build_query;
+use function is_array;
+use function is_string;
+use function str_replace;
+use function stripos;
+use function strtoupper;
+
+use const CURLOPT_COOKIEFILE;
+use const CURLOPT_COOKIEJAR;
+use const CURLOPT_CUSTOMREQUEST;
+use const CURLOPT_FOLLOWLOCATION;
+use const CURLOPT_HEADER;
+use const CURLOPT_HTTPGET;
+use const CURLOPT_HTTPHEADER;
+use const CURLOPT_NOBODY;
+use const CURLOPT_POST;
+use const CURLOPT_POSTFIELDS;
+use const CURLOPT_REFERER;
+use const CURLOPT_RETURNTRANSFER;
+use const CURLOPT_URL;
+use const CURLOPT_USERAGENT;
+use const false;
+use const null;
+use const PHP_VERSION;
+use const true;
+
 /**
  * A basic cURL wrapper
  *
  * See the README for documentation/examples or https://www.php.net/curl for more information about the libcurl extension for PHP
- *
- * @author Sean Huber <shuber@huberry.com>
  */
 class Curl
 {
@@ -56,9 +92,9 @@ class Curl
     protected $request;
 
     /**
-     * Sets `$cookie_file` to `<lib-dir>/var/curl_cookie.txt`.
-     *
-     * Also sets the $user_agent to $_SERVER['HTTP_USER_AGENT'] if it exists, 'Curl/PHP '.PHP_VERSION.' (https://github.com/powderblue/curl)' otherwise
+     * Sets:
+     * - `$cookie_file` to `<lib-dir>/var/curl_cookie.txt`;
+     * - `$user_agent` to something appropriate.
      */
     public function __construct()
     {
@@ -77,10 +113,10 @@ class Curl
     /**
      * Makes an HTTP request of the specified $method to a $url with an optional array or string of $vars
      *
-     * Returns a CurlResponse object if the request was successful, false otherwise
+     * Returns a response object if the request was successful, `false` otherwise
      *
      * @phpstan-param RequestParameters $vars
-     * @return CurlResponse|bool
+     * @return Response|bool
      */
     public function request(string $method, string $url, $vars = [])
     {
@@ -101,7 +137,7 @@ class Curl
         if (false === $response) {
             $this->error = curl_errno($this->request) . ' - ' . curl_error($this->request);
         } else {
-            $response = new CurlResponse($response);
+            $response = new Response($response);
         }
 
         curl_close($this->request);
@@ -112,10 +148,10 @@ class Curl
     /**
      * Makes an HTTP DELETE request to the specified $url with an optional array or string of $vars
      *
-     * Returns a CurlResponse object if the request was successful, false otherwise
+     * Returns a response object if the request was successful, `false` otherwise
      *
      * @phpstan-param RequestParameters $vars
-     * @return CurlResponse|bool
+     * @return Response|bool
      */
     public function delete(string $url, $vars = [])
     {
@@ -133,10 +169,10 @@ class Curl
     /**
      * Makes an HTTP GET request to the specified $url with an optional array or string of $vars
      *
-     * Returns a CurlResponse object if the request was successful, false otherwise
+     * Returns a response object if the request was successful, `false` otherwise
      *
      * @phpstan-param RequestParameters $vars
-     * @return CurlResponse|bool
+     * @return Response|bool
      */
     public function get(string $url, $vars = [])
     {
@@ -158,10 +194,10 @@ class Curl
     /**
      * Makes an HTTP HEAD request to the specified $url with an optional array or string of $vars
      *
-     * Returns a CurlResponse object if the request was successful, false otherwise
+     * Returns a response object if the request was successful, `false` otherwise
      *
      * @phpstan-param RequestParameters $vars
-     * @return CurlResponse|bool
+     * @return Response|bool
      */
     public function head(string $url, $vars = [])
     {
@@ -172,7 +208,7 @@ class Curl
      * Makes an HTTP POST request to the specified $url with an optional array or string of $vars
      *
      * @phpstan-param RequestParameters $vars
-     * @return CurlResponse|bool
+     * @return Response|bool
      */
     public function post(string $url, $vars = [])
     {
@@ -182,10 +218,10 @@ class Curl
     /**
      * Makes an HTTP PUT request to the specified $url with an optional array or string of $vars
      *
-     * Returns a CurlResponse object if the request was successful, false otherwise
+     * Returns a response object if the request was successful, `false` otherwise
      *
      * @phpstan-param RequestParameters $vars
-     * @return CurlResponse|bool
+     * @return Response|bool
      */
     public function put(string $url, $vars = [])
     {

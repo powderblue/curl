@@ -8,7 +8,7 @@
     <arg name="colors"/>
     <arg name="parallel" value="$(nproc)"/>
 
-    <file>lib</file>
+    <file>src</file>
 
     <!-- PHP code MUST use only UTF-8 without BOM. -->
     <rule ref="Generic.Files.ByteOrderMark"/>
@@ -27,10 +27,6 @@
         </properties>
     </rule>
     <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
-
-    <rule ref="PSR1">
-        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
-    </rule>
 
     <rule ref="PSR2">
         <exclude name="Generic.Files.LineLength"/>

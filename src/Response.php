@@ -1,13 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
+namespace PowderBlue\Curl;
+
+use function array_pop;
+use function array_shift;
+use function explode;
+use function preg_match;
+use function preg_match_all;
+use function str_replace;
+
 /**
- * Parses the response from a cURL request into an object containing the response body and an associative array of
- * headers
- *
- * @author Sean Huber <shuber@huberry.com>
+ * Parses the response from a cURL request into an object containing the response body and an associative array of headers
  */
-class CurlResponse
+class Response
 {
+    /** @var string */
+    private const CRLF = "\r\n";
+
     /**
      * The body of the response without the headers block
      */
@@ -24,7 +35,7 @@ class CurlResponse
      * Accepts the result of a cURL request as a string
      *
      * <code>
-     * $response = new CurlResponse(curl_exec($curl_handle));
+     * $response = new PowderBlue\Curl\Response(curl_exec($curl_handle));
      * echo $response->body;
      * echo $response->headers['Status'];
      * </code>
@@ -37,7 +48,7 @@ class CurlResponse
         // Extract headers from response
         preg_match_all($pattern, $response, $matches);
         $headers_string = array_pop($matches[0]);
-        $headers = explode("\r\n", str_replace("\r\n\r\n", '', $headers_string));
+        $headers = explode(self::CRLF, str_replace(self::CRLF . self::CRLF, '', $headers_string));
 
         // Remove headers from the response body
         $this->body = str_replace($headers_string, '', $response);

@@ -1,12 +1,9 @@
 # See https://phpstan.org/config-reference
 parameters:
-    bootstrapFiles:
-        - curl.php
-
     level: max
 
     paths:
-        - lib
+        - src
         - tests
 
     typeAliases:

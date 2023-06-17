@@ -31,10 +31,11 @@
         "jaz303/ztest": "^0.0.3",
         "danbettles/codesniffer-standard": "^2.0"
     },
+    "autoload": {
+        "psr-4": { "PowderBlue\\Curl\\": "src/" }
+    },
     "autoload-dev": {
-        "psr-4": {
-            "PowderBlue\\Curl\\Tests\\": "lib/Tests/"
-        }
+        "psr-4": { "PowderBlue\\Curl\\Tests\\": "tests/src/" }
     },
     "scripts": {
         "app:analyse-php": "phpstan analyse -c phpstan.neon --ansi",

@@ -1,0 +1,51 @@
+{
+    "name": "powderblue/curl",
+    "type": "library",
+    "description": "A basic CURL wrapper for PHP.  This is a modernised, and maintained, version of @shuber's rather nice, simple cURL wrapper, https://github.com/shuber/curl.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Bettles",
+            "email": "dan@powder-blue.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jaz303/ztest",
+                "version": "0.0.3",
+                "dist": {
+                    "url": "https://github.com/jaz303/ztest/archive/0a31703d3c5f80c17ff1ce755893e5ba79a863ea.zip",
+                    "type": "zip"
+                },
+                "autoload": {
+                    "files": ["ztest.php"]
+                }
+            }
+        }
+    ],
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "squizlabs/php_codesniffer": "^3.7",
+        "jaz303/ztest": "^0.0.3",
+        "danbettles/codesniffer-standard": "^2.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PowderBlue\\Curl\\Tests\\": "lib/Tests/"
+        }
+    },
+    "scripts": {
+        "app:analyse-php": "phpstan analyse -c phpstan.neon --ansi",
+        "app:lint-tests": "cd tests && phpcs",
+        "app:lint-php": "phpcs",
+        "app:test-php": "cd tests && ./runner.php",
+        "app:check-quality": [
+            "@app:analyse-php",
+            "@app:lint-tests",
+            "@app:lint-php",
+            "@app:test-php"
+        ]
+    }
+}

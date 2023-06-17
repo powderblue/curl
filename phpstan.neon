@@ -1,0 +1,14 @@
+# See https://phpstan.org/config-reference
+parameters:
+    bootstrapFiles:
+        - curl.php
+
+    level: max
+
+    paths:
+        - lib
+        - tests
+
+    typeAliases:
+        HeadersArray: 'array<string,string>'
+        RequestParameters: 'array<string,string>|string'

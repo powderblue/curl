@@ -1,4 +1,6 @@
 <?php
 
-require_once 'lib'.DIRECTORY_SEPARATOR.'curl.php';
-require_once 'lib'.DIRECTORY_SEPARATOR.'curl_response.php';
+$srcDir = __DIR__ . '/lib';
+
+require "{$srcDir}/curl.php";
+require "{$srcDir}/curl_response.php";

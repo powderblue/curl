@@ -79,4 +79,15 @@ class Helper
     // {
     //     ensure(!preg_match($pattern, $subject));
     // }
+
+    /**
+     * @param mixed $actual
+     */
+    public static function assertInstanceOf(
+        string $expectedClassName,
+        $actual,
+        string $message = ''
+    ): void {
+        ensure($actual instanceof $expectedClassName, $message);
+    }
 }

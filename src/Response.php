@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace PowderBlue\Curl;
 
-use function array_pop;
+use RuntimeException;
+
 use function array_shift;
 use function explode;
 use function preg_match;
-use function preg_match_all;
-use function str_replace;
 
 /**
  * Parses the response from a cURL request into an object containing the response body and an associative array of headers
@@ -39,40 +38,53 @@ class Response
      * echo $response->body;
      * echo $response->headers['Status'];
      * </code>
+     *
+     * @throws RuntimeException If the status line is invalid
+     * @throws RuntimeException If a header line is invalid
      */
     public function __construct(string $response)
     {
-        // Headers regex
-        $pattern = '~HTTP/\d\.\d.*?$.*?\r\n\r\n~ims';
+        $responseParts = explode(self::CRLF . self::CRLF, $response);
+        // @todo Validate parts
 
-        // Extract headers from response
-        preg_match_all($pattern, $response, $matches);
-        $headers_string = array_pop($matches[0]);
-        $headers = explode(self::CRLF, str_replace(self::CRLF . self::CRLF, '', $headers_string));
+        $headerLines = explode(self::CRLF, $responseParts[0]);
 
-        // Remove headers from the response body
-        $this->body = str_replace($headers_string, '', $response);
+        $statusLine = array_shift($headerLines);
+        $statusLineMatches = [];
+        $statusLineIsValid = preg_match('~^HTTP/(\d(?:\.\d)?)\s((\d{3})\s(.*))$~', $statusLine, $statusLineMatches);
 
-        // Extract the version and status from the first header
-        $version_and_status = array_shift($headers);
-        preg_match('~HTTP/(\d\.\d)\s(\d\d\d)\s(.*)~', $version_and_status, $matches);
-        $this->headers['Http-Version'] = $matches[1];
-        $this->headers['Status-Code'] = $matches[2];
-        $this->headers['Status'] = $matches[2] . ' ' . $matches[3];
-
-        // Convert headers into an associative array
-        foreach ($headers as $header) {
-            preg_match('~(.*?)\:\s(.*)~', $header, $matches);
-            $this->headers[$matches[1]] = $matches[2];
+        if (!$statusLineIsValid) {
+            throw new RuntimeException('The status line is invalid');
         }
+
+        list(
+            ,
+            $this->headers['Http-Version'],
+            $this->headers['Status'],
+            $this->headers['Status-Code']
+        ) = $statusLineMatches;
+
+        foreach ($headerLines as $headerLine) {
+            $headerLineMatches = [];
+            $headerLineIsValid = preg_match('~^(.*?):\s(.*)~', $headerLine, $headerLineMatches);
+
+            if (!$headerLineIsValid) {
+                throw new RuntimeException("The header line `{$headerLine}` is invalid");
+            }
+
+            // @todo Normalize name
+            $this->headers[$headerLineMatches[1]] = $headerLineMatches[2];
+        }
+
+        $this->body = $responseParts[1];
     }
 
     /**
      * Returns the response body
      *
      * <code>
-     * $curl = new Curl();
-     * $response = $curl->get('google.com');
+     * $curl = new PowderBlue\Curl\Curl();
+     * $response = $curl->get('https://example.com/');
      * echo $response;  // => echo $response->body;
      * </code>
      */

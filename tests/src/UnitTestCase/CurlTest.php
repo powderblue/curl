@@ -10,6 +10,7 @@ use PowderBlue\Curl\Tests\Helper;
 use ztest\UnitTestCase as TestCase;
 
 use function assert_identical;
+use function assert_match;
 
 use const false;
 
@@ -21,7 +22,7 @@ class CurlTest extends TestCase
 
         Helper::assertInstanceOf(Response::class, $response);
         /** @var Response $response */
-        Helper::assertMatches('~Example Domain~', $response->body);
+        assert_match('~Example Domain~', $response->body);
         assert_identical('200', $response->headers['Status-Code']);
     }
 

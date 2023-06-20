@@ -7,10 +7,15 @@ namespace PowderBlue\Curl\Tests\UnitTestCase;
 use PowderBlue\Curl\Curl;
 use PowderBlue\Curl\Response;
 use PowderBlue\Curl\Tests\Helper;
+use RuntimeException;
+use stdClass;
 use ztest\UnitTestCase as TestCase;
 
 use function assert_array;
+use function assert_equal;
 use function assert_identical;
+use function assert_match;
+use function assert_throws;
 use function ob_get_clean;
 use function ob_start;
 
@@ -60,7 +65,7 @@ class ResponseTest extends TestCase
         /** @var Response $response */
         assert_array($response->headers);
         Helper::assertNotEmpty($response->headers);
-        Helper::assertMatches('~^<!doctype~', $response->body);
+        assert_match('~^<!doctype~', $response->body);
     }
 
     public function test_should_set_status_headers(): void
@@ -86,5 +91,38 @@ class ResponseTest extends TestCase
         $output = ob_get_clean();
 
         assert_identical($response->body, $output);
+    }
+
+    public function test_json_should_return_the_decoded_body(): void
+    {
+        $response = (new Curl())->get('https://jsonplaceholder.typicode.com/posts/1');
+
+        Helper::assertInstanceOf(Response::class, $response);
+        /** @var Response $response */
+        assert_identical(true, $response->ok);
+        assert_match('~^application/json($|;)~', $response->headers['Content-Type']);
+
+        $data = new stdClass();
+        $data->userId = 1;
+        $data->id = 1;
+        $data->title = 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit';
+
+        $data->body = <<<END
+        quia et suscipit
+        suscipit recusandae consequuntur expedita et cum
+        reprehenderit molestiae ut ut quas totam
+        nostrum rerum est autem sunt rem eveniet architecto
+        END;
+
+        assert_equal($data, $response->json());
+    }
+
+    public function test_should_throw_an_exception_if_the_response_does_not_contain_json(): void
+    {
+        assert_throws(RuntimeException::class, function () {
+            $response = (new Curl())->get('https://example.com/');
+            /** @var Response $response */
+            $response->json();
+        });
     }
 }

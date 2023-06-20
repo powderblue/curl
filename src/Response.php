@@ -118,6 +118,7 @@ class Response
     /**
      * @return mixed
      * @throws RuntimeException If the content is not JSON
+     * @throws RuntimeException If the JSON is invalid
      */
     public function json(?bool $associative = null)
     {

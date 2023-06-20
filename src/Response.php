@@ -9,9 +9,11 @@ use RuntimeException;
 use function array_shift;
 use function explode;
 use function json_decode;
+use function json_last_error;
 use function preg_match;
 use function strtolower;
 
+use const JSON_ERROR_NONE;
 use const null;
 
 /**
@@ -123,7 +125,15 @@ class Response
             throw new RuntimeException('The content is not JSON');
         }
 
-        return json_decode($this->body, $associative);
+        $decoded = json_decode($this->body, $associative);
+
+        $jsonErrorId = json_last_error();
+
+        if (JSON_ERROR_NONE !== $jsonErrorId) {
+            throw new RuntimeException('The JSON is invalid', $jsonErrorId);
+        }
+
+        return $decoded;
     }
 
     /**

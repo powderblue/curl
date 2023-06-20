@@ -93,7 +93,7 @@ class ResponseTest extends TestCase
         assert_identical($response->body, $output);
     }
 
-    public function test_json_should_return_the_decoded_body(): void
+    public function test_json_should_decode_the_body(): void
     {
         $response = (new Curl())->get('https://jsonplaceholder.typicode.com/posts/1');
 
@@ -117,7 +117,7 @@ class ResponseTest extends TestCase
         assert_equal($data, $response->json());
     }
 
-    public function test_should_throw_an_exception_if_the_response_does_not_contain_json(): void
+    public function test_json_should_throw_an_exception_if_the_response_does_not_contain_json(): void
     {
         assert_throws(RuntimeException::class, function () {
             $response = (new Curl())->get('https://example.com/');
@@ -148,5 +148,14 @@ class ResponseTest extends TestCase
         ];
 
         assert_identical($data, $response->json(true));
+    }
+
+    public function test_json_should_throw_an_exception_if_the_json_is_invalid(): void
+    {
+        assert_throws(RuntimeException::class, function () {
+            $incompleteJson = '{';
+            $response = new Response("HTTP/2 200 \r\nContent-Type: application/json\r\n\r\n{$incompleteJson}");
+            $response->json();
+        });
     }
 }

@@ -14,8 +14,44 @@ use function assert_identical;
 use function ob_get_clean;
 use function ob_start;
 
+use const false;
+use const true;
+
 class ResponseTest extends TestCase
 {
+    public function test_should_set_the_value_of_ok(): void
+    {
+        $ok = new Response("HTTP/2 200 \r\n\r\n");
+
+        assert_identical(true, $ok->ok);
+        assert_identical(200, $ok->status);
+
+        $ok = new Response("HTTP/2 299 Better Than OK\r\n\r\n");
+
+        assert_identical(true, $ok->ok);
+        assert_identical(299, $ok->status);
+
+        $continue = new Response("HTTP/2 100 Continue\r\n\r\n");
+
+        assert_identical(false, $continue->ok);
+        assert_identical(100, $continue->status);
+
+        $seeOther = new Response("HTTP/2 300 Multiple Choices\r\n\r\n");
+
+        assert_identical(false, $seeOther->ok);
+        assert_identical(300, $seeOther->status);
+
+        $notFound = new Response("HTTP/2 404 Not Found\r\n\r\n");
+
+        assert_identical(false, $notFound->ok);
+        assert_identical(404, $notFound->status);
+
+        $internalServerError = new Response("HTTP/2 500 Internal Server Error\r\n\r\n");
+
+        assert_identical(false, $internalServerError->ok);
+        assert_identical(500, $internalServerError->status);
+    }
+
     public function test_should_separate_response_headers_from_the_body(): void
     {
         $response = (new Curl())->get('https://example.com/');
@@ -23,6 +59,7 @@ class ResponseTest extends TestCase
         Helper::assertInstanceOf(Response::class, $response);
         /** @var Response $response */
         assert_array($response->headers);
+        Helper::assertNotEmpty($response->headers);
         Helper::assertMatches('~^<!doctype~', $response->body);
     }
 

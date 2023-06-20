@@ -31,6 +31,20 @@ class Response
     public array $headers = [];
 
     /**
+     * `true` if the request was successful (status in the range 200-299), or `false` otherwise
+     *
+     * @readonly
+     */
+    public bool $ok;
+
+    /**
+     * HTTP status code of the response
+     *
+     * @readonly
+     */
+    public int $status;
+
+    /**
      * Accepts the result of a cURL request as a string
      *
      * <code>
@@ -63,6 +77,9 @@ class Response
             $this->headers['Status'],
             $this->headers['Status-Code']
         ) = $statusLineMatches;
+
+        $this->status = (int) $this->headers['Status-Code'];
+        $this->ok = $this->status >= 200 && $this->status <= 299;
 
         foreach ($headerLines as $headerLine) {
             $headerLineMatches = [];

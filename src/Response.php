@@ -117,13 +117,13 @@ class Response
      * @return mixed
      * @throws RuntimeException If the content is not JSON
      */
-    public function json()
+    public function json(?bool $associative = null)
     {
         if ('application/json' !== $this->contentType) {
             throw new RuntimeException('The content is not JSON');
         }
 
-        return json_decode($this->body);
+        return json_decode($this->body, $associative);
     }
 
     /**

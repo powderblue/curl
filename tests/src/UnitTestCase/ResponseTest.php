@@ -125,4 +125,28 @@ class ResponseTest extends TestCase
             $response->json();
         });
     }
+
+    public function test_json_can_return_an_associative_array(): void
+    {
+        $response = (new Curl())->get('https://jsonplaceholder.typicode.com/posts/1');
+
+        Helper::assertInstanceOf(Response::class, $response);
+        /** @var Response $response */
+        assert_identical(true, $response->ok);
+        assert_match('~^application/json($|;)~', $response->headers['Content-Type']);
+
+        $data = [
+            'userId' => 1,
+            'id' => 1,
+            'title' => 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+            'body' => <<<END
+            quia et suscipit
+            suscipit recusandae consequuntur expedita et cum
+            reprehenderit molestiae ut ut quas totam
+            nostrum rerum est autem sunt rem eveniet architecto
+            END,
+        ];
+
+        assert_identical($data, $response->json(true));
+    }
 }

@@ -27,17 +27,19 @@ $curl = new PowderBlue\Curl\Curl();
 The `Curl` class provides shortcuts for making requests using the `HEAD`, `GET`, `POST`, `PUT`, and `DELETE` methods.  You must always specify a URL; you can also pass an array/string of variables to send along with it, if need be.
 
 ```php
-$response = $curl->head($url, $vars);
-$response = $curl->get($url, $vars);  // In this case, the variables will be appended to the URL in the form of a query-string
-$response = $curl->post($url, $vars);
-$response = $curl->put($url, $vars);
-$response = $curl->delete($url, $vars);
+// When making `HEAD` and `GET` requests, parameters will be appended to the URL in the form of a query-string
+$response = $curl->head($url, $requestParams);
+$response = $curl->get($url, $requestParams);
+// Otherwise, you can pass an associative array or a string to pop into the body of the request
+$response = $curl->post($url, $requestBody);
+$response = $curl->put($url, $requestBody);
+$response = $curl->delete($url, $requestBody);
 ```
 
 Use `Curl::request()` to make a request using a custom request-method, thus:
 
 ```php
-$response = $curl->request('<method-name>', $url, $vars);
+$response = $curl->request('<method-name>', $url, $requestBody);
 ```
 
 Examples:
@@ -48,6 +50,7 @@ $response = $curl->get('https://www.google.com/?q=test');
 // In this case, '?q=test' will be appended to the URL
 $response = $curl->get('https://www.google.com/', ['q' => 'test']);
 
+// The data will be encoded for you and the `Content-Type` header set to `multipart/form-data`
 $response = $curl->post('test.com/posts', ['title' => 'Test', 'body' => 'This is a test']);
 ```
 
@@ -123,7 +126,7 @@ $curl->headers['User-Agent'] = '<user-agent-string>';
 
 ### Setting Custom cURL Request Options
 
-By default, redirects will be followed.  You can disable this by setting:
+By default, redirects will be followed.  You can disable this with:
 
 ```php
 $curl->follow_redirects = false;

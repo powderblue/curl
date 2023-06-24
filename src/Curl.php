@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace PowderBlue\Curl;
 
+use PowderBlue\Curl\CurlException\ExecFailedException;
+use PowderBlue\Curl\CurlException\SetOptFailedException;
+
 use function array_replace;
 use function curl_close;
-use function curl_errno;
-use function curl_error;
 use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
 use function dirname;
 use function http_build_query;
+use function restore_error_handler;
+use function set_error_handler;
 use function strpos;
 use function strtoupper;
 
@@ -29,6 +32,7 @@ use const CURLOPT_REFERER;
 use const CURLOPT_RETURNTRANSFER;
 use const CURLOPT_URL;
 use const CURLOPT_USERAGENT;
+use const E_WARNING;
 use const false;
 use const null;
 use const PHP_VERSION;
@@ -39,7 +43,6 @@ use const true;
  *
  * See the README for documentation/examples or https://www.php.net/curl for more information about the libcurl extension for PHP
  *
- * @todo Throw exceptions
  * @todo Check/update types/values
  */
 class Curl
@@ -77,11 +80,6 @@ class Curl
      * @phpstan-var CurlOptions
      */
     public array $options = [];
-
-    /**
-     * The description of the cURL error that just occurred, if applicable
-     */
-    private string $error = '';
 
     /**
      * Sets:
@@ -168,47 +166,45 @@ class Curl
         return $curlOptions;
     }
 
-    private function setError(string $error): self
-    {
-        $this->error = $error;
-
-        return $this;
-    }
-
-    /**
-     * Returns the description of the cURL error that just occurred, if applicable
-     */
-    public function error(): string
-    {
-        return $this->error;
-    }
-
     /**
      * @phpstan-param CurlPostFields $requestBody
      * @return Response|bool
+     * @throws CurlInitFailedException If the `curl_init()` call fails
+     * @throws SetOptFailedException If it fails to apply options to the cURL session
+     * @throws ExecFailedException If the `curl_exec()` call fails
      */
     public function request(
         string $method,
         string $url,
         $requestBody = null
     ) {
-        $this->setError('');
-        // @todo Handle error
+        /** @phpstan-var resource|false */
         $curlHandle = curl_init();
+
+        if (false === $curlHandle) {
+            throw new CurlInitFailedException();
+        }
 
         try {
             $curlOptions = $this->createCurlOptions($method, $url, $requestBody);
-            // @todo Handle error
-            curl_setopt_array($curlHandle, $curlOptions);
+
+            // Swallow warnings, which we're expecting if options are invalid
+            set_error_handler(null, E_WARNING);
+            $optionsApplied = curl_setopt_array($curlHandle, $curlOptions);
+            restore_error_handler();
+
+            if (!$optionsApplied) {
+                throw new SetOptFailedException($curlHandle);
+            }
 
             /** @phpstan-var string|false */
             $response = curl_exec($curlHandle);
 
             if (false === $response) {
-                $this->setError(curl_errno($curlHandle) . ' - ' . curl_error($curlHandle));
-            } else {
-                $response = new Response($response);
+                throw new ExecFailedException($curlHandle);
             }
+
+            $response = new Response($response);
         } finally {
             curl_close($curlHandle);
         }

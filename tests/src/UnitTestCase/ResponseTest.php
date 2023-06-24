@@ -119,9 +119,10 @@ class ResponseTest extends TestCase
 
     public function test_json_should_throw_an_exception_if_the_response_does_not_contain_json(): void
     {
-        assert_throws(RuntimeException::class, function () {
-            $response = (new Curl())->get('https://example.com/');
-            /** @var Response $response */
+        /** @var Response */
+        $response = (new Curl())->get('https://example.com/');
+
+        assert_throws(RuntimeException::class, function () use ($response): void {
             $response->json();
         });
     }
@@ -152,9 +153,10 @@ class ResponseTest extends TestCase
 
     public function test_json_should_throw_an_exception_if_the_json_is_invalid(): void
     {
-        assert_throws(RuntimeException::class, function () {
-            $incompleteJson = '{';
-            $response = new Response("HTTP/2 200 \r\nContent-Type: application/json\r\n\r\n{$incompleteJson}");
+        $incompleteJson = '{';
+        $response = new Response("HTTP/2 200 \r\nContent-Type: application/json\r\n\r\n{$incompleteJson}");
+
+        assert_throws(RuntimeException::class, function () use ($response): void {
             $response->json();
         });
     }

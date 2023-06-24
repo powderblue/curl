@@ -51,7 +51,7 @@ $response = $curl->get('https://www.google.com/', ['q' => 'test']);
 $response = $curl->post('test.com/posts', ['title' => 'Test', 'body' => 'This is a test']);
 ```
 
-All requests return an instance of `PowderBlue\Curl\Response`&mdash;see below for more information&mdash;or `false` if an error occurred.  You can access the error string with `Curl::error()`.
+All requests return an instance of [`PowderBlue\Curl\Response`](#The-Response-Class) if successful, or throw an exception if an error occurs.
 
 ### The Response Class
 

@@ -32,7 +32,7 @@ class Response
     /**
      * An associative array containing the response's headers
      *
-     * @phpstan-var HeadersArray
+     * @phpstan-var Headers
      */
     public array $headers = [];
 
@@ -55,19 +55,13 @@ class Response
     /**
      * Accepts the result of a cURL request as a string
      *
-     * <code>
-     * $response = new PowderBlue\Curl\Response(curl_exec($curl_handle));
-     * echo $response->body;
-     * echo $response->headers['Status'];
-     * </code>
-     *
      * @throws RuntimeException If the status line is invalid
      * @throws RuntimeException If a header line is invalid
      */
     public function __construct(string $response)
     {
+        // @todo Validate resulting parts.  Remember: it's okay for the body to be empty.
         $responseParts = explode(self::CRLF . self::CRLF, $response);
-        // @todo Validate parts
 
         $headerLines = explode(self::CRLF, $responseParts[0]);
 
@@ -116,6 +110,10 @@ class Response
     }
 
     /**
+     * Like [`Response.json()` in JavaScript](https://developer.mozilla.org/en-US/docs/Web/API/Response/json): "Note
+     * that despite the method being named json(), the result is not JSON but is instead the result of taking JSON as
+     * input and parsing it to produce [an] object."
+     *
      * @return mixed
      * @throws RuntimeException If the content is not JSON
      * @throws RuntimeException If the JSON is invalid
@@ -139,12 +137,6 @@ class Response
 
     /**
      * Returns the response body
-     *
-     * <code>
-     * $curl = new PowderBlue\Curl\Curl();
-     * $response = $curl->get('https://example.com/');
-     * echo $response;  // => echo $response->body;
-     * </code>
      */
     public function __toString(): string
     {

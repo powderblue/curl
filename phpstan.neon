@@ -7,5 +7,7 @@ parameters:
         - tests
 
     typeAliases:
-        HeadersArray: 'array<string,string>'
-        RequestParameters: 'array<string,string>|string'
+        Headers: 'array<string,string>'
+        RequestParameters: 'array<string,string>'
+        CurlPostFields: 'RequestParameters|string|null'
+        CurlOptions: 'array<int,mixed>'

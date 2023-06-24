@@ -129,13 +129,10 @@ By default, redirects will be followed.  You can disable this by setting:
 $curl->follow_redirects = false;
 ```
 
-You can set/override many different options when making cURL requests.  The following example shows how they can be set.
+If you need to do something a little more exotic, you can set/override cURL options like this:
 
 ```php
-$curl->options['AUTOREFERER'] = true;
-$curl->options['autoreferer'] = true;
-$curl->options['CURLOPT_AUTOREFERER'] = true;
-$curl->options['curlopt_autoreferer'] = true;
+$curl->options[CURLOPT_AUTOREFERER] = true;
 ```
 
 > :information_source: See the [`curl_setopt()` documentation](https://www.php.net/curl_setopt) for a list of cURL request options

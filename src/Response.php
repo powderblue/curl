@@ -18,6 +18,8 @@ use const null;
 
 /**
  * Parses the response from a cURL request into an object containing the response body and an associative array of headers
+ *
+ * @phpstan-import-type Headers from Curl
  */
 class Response
 {

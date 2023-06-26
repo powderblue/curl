@@ -43,6 +43,10 @@ use const true;
  *
  * See the README for documentation/examples or https://www.php.net/curl for more information about the libcurl extension for PHP
  *
+ * @phpstan-type RequestParameters array<string,string>
+ * @phpstan-type CurlPostFields RequestParameters|string|null
+ * @phpstan-type Headers array<string,string>
+ * @phpstan-type CurlOptions array<int,mixed>
  * @todo Check/update types/values
  */
 class Curl

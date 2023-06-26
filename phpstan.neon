@@ -5,9 +5,3 @@ parameters:
     paths:
         - src
         - tests
-
-    typeAliases:
-        Headers: 'array<string,string>'
-        RequestParameters: 'array<string,string>'
-        CurlPostFields: 'RequestParameters|string|null'
-        CurlOptions: 'array<int,mixed>'

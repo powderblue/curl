@@ -193,7 +193,7 @@ class Curl
             $curlOptions = $this->createCurlOptions($method, $url, $requestBody);
 
             // Swallow warnings, which we're expecting if options are invalid
-            set_error_handler(null, E_WARNING);
+            set_error_handler(fn() => true, E_WARNING);
             $optionsApplied = curl_setopt_array($curlHandle, $curlOptions);
             restore_error_handler();
 

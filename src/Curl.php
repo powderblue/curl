@@ -222,7 +222,7 @@ class Curl
      * See https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
      *
      * @phpstan-param CurlPostFields $requestBody
-     * @return Response|bool
+     * @return Response
      */
     public function delete(string $url, $requestBody = null)
     {
@@ -233,7 +233,7 @@ class Curl
      * Also see https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
      *
      * @phpstan-param RequestParameters $requestParams
-     * @return Response|bool
+     * @return Response
      */
     public function get(
         string $url,
@@ -254,7 +254,7 @@ class Curl
      * See https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD
      *
      * @phpstan-param RequestParameters $requestParams
-     * @return Response|bool
+     * @return Response
      */
     public function head(string $url, array $requestParams = [])
     {
@@ -263,7 +263,7 @@ class Curl
 
     /**
      * @phpstan-param CurlPostFields $requestBody
-     * @return Response|bool
+     * @return Response
      */
     public function post(string $url, $requestBody = null)
     {
@@ -274,7 +274,7 @@ class Curl
      * See https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT
      *
      * @phpstan-param CurlPostFields $requestBody
-     * @return Response|bool
+     * @return Response
      */
     public function put(string $url, $requestBody = null)
     {

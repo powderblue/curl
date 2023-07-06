@@ -172,7 +172,7 @@ class Curl
 
     /**
      * @phpstan-param CurlPostFields $requestBody
-     * @return Response|bool
+     * @return Response
      * @throws CurlInitFailedException If the `curl_init()` call fails
      * @throws SetOptFailedException If it fails to apply options to the cURL session
      * @throws ExecFailedException If the `curl_exec()` call fails
@@ -202,13 +202,15 @@ class Curl
             }
 
             /** @phpstan-var string|false */
-            $response = curl_exec($curlHandle);
+            $result = curl_exec($curlHandle);
 
-            if (false === $response) {
+            if (false === $result) {
                 throw new ExecFailedException($curlHandle);
             }
 
-            $response = new Response($response);
+            /** @var string $result */
+
+            $response = new Response($result);
         } finally {
             curl_close($curlHandle);
         }
